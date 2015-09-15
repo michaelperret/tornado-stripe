@@ -5,14 +5,23 @@ import unittest
 
 from tornado_stripe import Stripe
 from datetime import datetime
-
+import simplejson as json
 DUMMY_PLAN = {
     'amount': 2000,
     'interval': 'month',
-    'name': 'Amazing Gold Plan',
+    'name': 'Semi Cool Gold Plan',
     'currency': 'usd',
-    'id': 'stripe-test-gold'
+    'id': 'stripe-test-cool-gold'
  }
+
+DUMMY_PLAN2 = {
+    'amount': 5000,
+    'interval': 'month',
+    'name': 'Cooler Gold Plan',
+    'currency': 'usd',
+    'id': 'stripe-test-really-gold'
+ }
+
 
 DUMMY_CUSTOMER = {
     'email': 'test-delete-me@example.com',
@@ -143,6 +152,11 @@ class GoodApiKeyTest(unittest.TestCase):
             raise KeyError("You must set STRIPE_API_KEY environment variable. Example: export STRIPE_API_KEY=your-stripe-api-key; nosetests")
 
         self.stripe = Stripe(api_key, blocking=True)
+        custs = self.stripe.customers.get()['data']
+        for cust in custs:
+            print cust
+            cust_id = cust['id']
+            self.stripe.customers.id(cust_id).delete()
 
 
 class PlansTest(GoodApiKeyTest):
@@ -190,6 +204,7 @@ class InvoicesTest(GoodApiKeyTest):
         # Test creating customer
         customer    = self.stripe.customers.post(**DUMMY_CUSTOMER)
         customer_id = customer['id']
+
         self.assertTrue(customer is not None)
         self.assertTrue(customer_id is not None)
 
@@ -223,7 +238,7 @@ class InvoicesTest(GoodApiKeyTest):
 
         # Delete DUMMY_PLAN
         self.stripe.plans.id(DUMMY_PLAN['id']).delete()
-
+        
 
 class RecipientsTest(GoodApiKeyTest):
     def setUp(self):
@@ -233,7 +248,7 @@ class RecipientsTest(GoodApiKeyTest):
     def crud_test(self):
         account = self.stripe.account.get()
 
-        if account['transfer_enabled']:
+        if account['transfers_enabled']:
             recipient    = self.stripe.recipients.post(**DUMMY_RECIPIENTS)
             recipient_id = recipient['id']
 

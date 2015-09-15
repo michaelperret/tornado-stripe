@@ -28,7 +28,7 @@ You may also install it using pip or easy_install with:
 
     pip install tornado-stripe
 
-or
+ or
 
     easy_install install tornado-stripe
 

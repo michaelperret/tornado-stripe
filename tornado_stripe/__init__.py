@@ -29,13 +29,13 @@ class Stripe(object):
         'charges',
         'customers',
         'cards',
-        'subscription',
+        'subscriptions',
         'plans',
         'coupons',
         'discount',
         'invoices',
         'upcoming',
-        'lines',
+        'lists',
         'invoiceitems',
         'dispute',
         'close',
@@ -43,8 +43,9 @@ class Stripe(object):
         'cancel',
         'recipients',
         'application_fees',
-        'refund',
-        'account',
+        'bank_accounts',
+        'refunds',
+        'accounts',
         'balance',
         'history',
         'events',
@@ -126,7 +127,7 @@ class Stripe(object):
 
     def _call(self, http_method, callback=None, **kwargs):
         copy_of_url = self.url
-
+        print copy_of_url
         # reset self.url
         self.reset_url()
 
@@ -141,7 +142,6 @@ class Stripe(object):
 
         if not self.blocking:
             httpclient_args.append(functools.partial(self._parse_response, callback))
-
         return self.httpclient_instance.fetch(*httpclient_args, **httpclient_kwargs)
 
 
